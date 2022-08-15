@@ -1,0 +1,66 @@
+---
+title: "stl_lead_inequity_practice"
+author: "Amritpal Sandhu"
+format: html
+editor: visual
+execute: 
+  warning: false
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+```{r}
+# Read the csv to stl_lead
+stl_lead <- read_csv(here::here("data", "stl_blood_lead.csv"))
+```
+
+```{r}
+# Basic exploration with clean_names()
+
+clean_names(stl_lead)
+
+stl_lead_clean <- stl_lead |> clean_names()
+
+stl_lead_clean_names <- clean_names(stl_lead)
+
+```
+
+```{r}
+# Make a data frame and add a new column using mutate
+
+stl_lead_df <- data.frame(stl_lead_clean |> mutate(prop_white = (white / total_pop)* 100))
+```
+
+```{r}
+# Create a scatterplot of percentage of children with elevated blood lead levels
+
+ggplot(data = stl_lead_df, aes(x = pct_elevated, 
+                               y = white)) + 
+  geom_point(aes(size = 3, 
+                 alpha = 9, 
+                 colour = poverty_tot), 
+             show.legend = FALSE) + 
+  labs(x = "Percentage of children with elevated blood lead levels", 
+       y = "White Children", 
+       title = "Percentage of Children with Elevated Blood Lead Levels") + 
+  scale_color_gradient(low = "blue", high = "orange")
+```
+
+```{r}
+# Save the scatterplot
+
+ggsave(here::here("figs", "stl_lead_plot_practice.png"), width = 6, height = 5)
+```
+
+```{r}
+# Create a histogram 
+
+ggplot(data = stl_lead_df, aes(x = pct_elevated)) + geom_histogram(alpha = 2, fill = "blue", binwidth = 1) + labs(x = "Percent of elevated blood lead levels")
+```
+
+```{r}
+ggsave(here::here("figs", "elevated_blood_hist.jpg"))
+```
